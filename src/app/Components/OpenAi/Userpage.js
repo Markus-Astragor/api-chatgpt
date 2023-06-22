@@ -7,10 +7,14 @@ export default function Userpage() {
   const [error, setError] = useState('');
   const animalInput = useRef(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     let animalInputValue = animalInput.current.value;
     
     e.preventDefault();
+
+    try{
+
+    
     setCount(count + 1);
     if (count === 10) 
     {
@@ -19,10 +23,34 @@ export default function Userpage() {
     
 
     animalInput.current.value = '';
+
+    const response = await fetch("/api/generate", {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({animal: animalInputValue})
+    });
+
+    console.log('resonse', response);
+
+    const data = await response.json();
+
+    if(response.status !== 200)
+    {
+      throw data.error || new Error(`Request was failed with status ${response.status}`)
+    }
+
+    setAnimalName(data.result)
+  }
+  catch(error){
+    console.log(error);
+    alert(error)
+  }
   }
 
   return (
-    <div className='h-1/3 flex flex-col justify-center items-center bg-gradient-to-r from-cyan-500 to-green-500'>
+    <div className='h-1/2 flex flex-col justify-center items-center bg-gradient-to-r from-gray-950 via-green-400 to-cyan-500'>
       <h3 className='text-3xl font-bold'>This is an Ai App</h3>
       <h3 className='text-2xl font-bold'>Give the name to your pet</h3>
 
@@ -37,3 +65,5 @@ export default function Userpage() {
     </div>
   )
 }
+
+
