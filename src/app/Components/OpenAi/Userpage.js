@@ -1,5 +1,9 @@
 'use client';
+import * as dotenv from 'dotenv';
 import { useRef, useState } from "react";
+import axios from "axios";
+dotenv.config({path:__dirname + '/.env'})
+
 
 export default function Userpage() {
   const [animalName, setAnimalName] = useState('');
@@ -8,45 +12,31 @@ export default function Userpage() {
   const animalInput = useRef(null);
 
   const handleSubmit = async (e) => {
-    let animalInputValue = animalInput.current.value;
     
     e.preventDefault();
+    let animalInputValue = animalInput.current.value;
+    setError('')
 
-    try{
-
-    
     setCount(count + 1);
     if (count === 10) 
     {
       setError('Only 10 requests are allowed');
     }
-    
+  
+    axios.post('http://localhost:8080/chatGPT', {
+      prompt: animalInputValue
+    }).then(response => {
+      console.log(response);
+      setAnimalName(response.data)
+    }).catch(error => {
+      console.log(error);
+      setError(error.message)
+    })
+
 
     animalInput.current.value = '';
 
-    const response = await fetch("/api/generate", {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({animal: animalInputValue})
-    });
-
-    console.log('resonse', response);
-
-    const data = await response.json();
-
-    if(response.status !== 200)
-    {
-      throw data.error || new Error(`Request was failed with status ${response.status}`)
-    }
-
-    setAnimalName(data.result)
-  }
-  catch(error){
-    console.log(error);
-    alert(error)
-  }
+  
   }
 
   return (
