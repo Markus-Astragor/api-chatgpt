@@ -43,7 +43,7 @@ export default function Userpage() {
   }
 
   return (
-    <div className='h-1/3 flex flex-col justify-center items-center bg-gradient-to-r from-gray-950 via-green-400 to-cyan-500'>
+    <div className='h-screen flex flex-col justify-center items-center bg-gradient-to-r from-gray-950 via-green-400 to-cyan-500'>
       <h3 className='text-3xl font-bold'>This is an Ai App</h3>
       <h3 className='text-2xl font-bold'>Give the name to your pet</h3>
 
